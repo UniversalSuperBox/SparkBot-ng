@@ -9,6 +9,10 @@ class CommandRunError(SparkBotError):
     """Raised when an issue is encountered during execution of a command"""
 
 
+class CommandReturnError(CommandRunError):
+    """Raised when a command does not return a str or GeneratorType"""
+
+
 class CommandNotFound(CommandRunError):
     """Raised when a command is not found for the given request"""
 

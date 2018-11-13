@@ -118,3 +118,12 @@ class TestBot:
         """Tests that my_help is added as the command for 'help'"""
 
         assert bot.commands["help"] == bot.my_help
+
+    def test_command_running(self, bot):
+        """Tests that the bot runs a simple command"""
+
+        @bot.command("ping")
+        def ping():
+            return "pong"
+
+        assert bot.command_dispatcher("ping") == "pong"
