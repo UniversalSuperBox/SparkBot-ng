@@ -5,7 +5,7 @@ from types import GeneratorType
 
 class ConsoleReceiver(Cmd):
     intro = "Welcome to the SparkBot-ng console receiver. Type 'help' or '?' to list commands.\n"
-    prompt = "(sparkbot)"
+    prompt = "(sparkbot) "
     file = None
 
     def __init__(self, bot):
