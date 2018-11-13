@@ -125,7 +125,7 @@ class SparkBot:
             commandline = shlex.split(user_message)
         except ValueError:
             # Something is incorrect in the user's command string
-            raise CommandStringError
+            raise CommandStringError()
 
         user_requested_function = str.lower(commandline[0])
 
@@ -225,7 +225,7 @@ class SparkBot:
 
         return self._help_all_string
 
-    def my_fallback(self):
+    def my_fallback(self, commandline):
         """The default "fallback" command
 
         This function is dispatched when the user types a command that doesn't exist.

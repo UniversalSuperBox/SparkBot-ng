@@ -123,7 +123,16 @@ class TestBot:
         """Tests that the bot runs a simple command"""
 
         @bot.command("ping")
-        def ping():
+        def ping(commandline):
             return "pong"
 
         assert bot.command_dispatcher("ping") == "pong"
+
+    def test_commandline_passing(self, bot):
+        """Tests that the bot runs a command and passes the commandline"""
+
+        @bot.command("argument")
+        def argument(commandline):
+            return '.'.join(commandline)
+
+        assert bot.command_dispatcher("argument stuff 'and things'") == "argument.stuff.and things"

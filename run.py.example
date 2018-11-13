@@ -14,17 +14,16 @@
 
 import logging
 from sparkbot import SparkBot
-from ciscosparkapi import CiscoSparkAPI
+from sparkbot_receivers.console_receiver import ConsoleReceiver
 
 LOGGER = logging.getLogger('sparkbot')
 
 # Initialize the environment
-spark_api = CiscoSparkAPI()
-bot = SparkBot(spark_api, logger=LOGGER)
+bot = SparkBot()
 
 # Add commands here
 @bot.command("ping")
-def ping(caller, room_id):
+def ping(commandline):
     """
     Usage: `ping`
 
@@ -32,3 +31,6 @@ def ping(caller, room_id):
     """
 
     return '**pong**'
+
+if __name__ == "__main__":
+    ConsoleReceiver(bot).cmdloop()
