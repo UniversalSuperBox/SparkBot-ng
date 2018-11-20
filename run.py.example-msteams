@@ -14,12 +14,18 @@
 
 import logging
 from sparkbot import SparkBot
-from sparkbot_receivers.console_receiver import ConsoleReceiver
+import sparkbot.receivers.msteams
+
+from os import environ
 
 LOGGER = logging.getLogger('sparkbot')
 
 # Initialize the environment
 bot = SparkBot()
+try:
+    bot_name = environ["MS_TEAMS_NAME"]
+except KeyError:
+    print("MS_TEAMS_NAME must be provided in the environment, set to the name of the bot in Teams.")
 
 # Add commands here
 @bot.command("ping")
@@ -32,5 +38,4 @@ def ping(commandline):
 
     return '**pong**'
 
-if __name__ == "__main__":
-    ConsoleReceiver(bot).cmdloop()
+app = sparkbot.receivers.msteams.create(bot, bot_name)

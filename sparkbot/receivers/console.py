@@ -29,6 +29,11 @@ class ConsoleReceiver(Cmd):
                 print(token)
         else:
             print(response)
-    
+
+    def do_EOF(self, arg):
+        print("")
+        exit(0)
+
     def do_exit(self, arg):
+        print("")
         exit(0)

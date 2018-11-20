@@ -107,14 +107,14 @@ setup(
     #
     #   py_modules=["my_module"],
     #
-    packages=find_packages(exclude=["contrib", "docs", "tests"]),  # Required
+    packages=["sparkbot"],  # Required
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is
     # installed, so they must be valid existing projects.
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=["CiscoSparkAPI", "falcon"],
+    install_requires=[],
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
     # syntax, for example:
@@ -124,6 +124,7 @@ setup(
     # Similar to `install_requires` above, these must be valid existing
     # projects.
     extras_require={  # Optional
-        "dev": ["sphinx", "sphinx-rtd-theme", "requests", "pytest"]
+        "dev": ["sphinx", "sphinx-rtd-theme", "pytest"],
+        "msteams": ["falcon", "requests", "botbuilder-core", "botframework-connector", "botbuilder-schema"],
     },
 )
