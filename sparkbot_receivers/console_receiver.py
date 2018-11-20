@@ -4,7 +4,8 @@ from sparkbot.exceptions import CommandRunError
 from types import GeneratorType
 
 class ConsoleReceiver(Cmd):
-    intro = "Welcome to the SparkBot-ng console receiver. Type 'help' or '?' to list commands.\n"
+    intro = "Welcome to the SparkBot-ng console receiver. Type 'command' to execute " +\
+            "a bot command. Type 'help' or '?' to list commands.\n"
     prompt = "(sparkbot) "
     file = None
 
@@ -14,6 +15,9 @@ class ConsoleReceiver(Cmd):
         self.logger = getLogger("console_receiver")
 
     def do_command(self, arg):
+        """ Execute the arguments following 'command' on SparkBot.
+        To add more actions to this command, add them in your bot runner.
+        """
         try:
             response = self.bot.command_dispatcher(arg)
         except CommandRunError as e:
@@ -25,3 +29,6 @@ class ConsoleReceiver(Cmd):
                 print(token)
         else:
             print(response)
+    
+    def do_exit(self, arg):
+        exit(0)
