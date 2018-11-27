@@ -26,6 +26,7 @@ try:
     bot_name = environ["MS_TEAMS_NAME"]
 except KeyError:
     print("MS_TEAMS_NAME must be provided in the environment, set to the name of the bot in Teams.")
+    exit(1)
 
 # Add commands here
 @bot.command("ping")
