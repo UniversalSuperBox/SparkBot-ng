@@ -1,12 +1,7 @@
 Quickstart
 ==========
 
-This document will lead you through the steps to run the base Sparkbot instance.
-
-Get a token from Webex Teams
-----------------------------
-
-Head over to Cisco Webex Teams for Developer's `My Apps portal`_ and click the Add button to create a new bot. Go through the steps to create a bot. Once you're finished, copy the Bot's Access Token somewhere safe. We'll need it later in this process.
+This document will lead you through the steps to run Sparkbot on your development machine and write basic commands.
 
 Dependencies
 ------------
@@ -15,67 +10,122 @@ First you'll need to install the prerequisites for running SparkBot.
 
 SparkBot requires the following software:
 
-* Python 3.5 or higher
-* Reverse proxy, such as nginx, for its webhook receiver. We'll be using `ngrok`_ in this quickstart.
+* Python 3.6 or higher with Pip
 
-Ubuntu 16.04
-^^^^^^^^^^^^
+To get started, we'll need to install ``virtualenv`` which we'll use to keep SparkBot's dependencies from cluttering the rest of the system. Run the following command to install it::
 
-To install the prerequisites on Ubuntu 16.04::
+    pip3 install virtualenv --user
 
-    sudo apt install python3 python3-virtualenv python3-pip nginx
+Set up your virtualenv
+----------------------
 
-Clone the source
-----------------
+With virtualenv installed, we can set up an environment where all of the SparkBot dependencies can be installed without touching any of the system packages. Let's start by creating a new virtualenv in your home folder::
 
-Clone the bot's source to your desired location. From here on, we'll assume that the bot's source code is located in ``~/sparkbot``, but you can change the path as you need.
+    python3 -m virtualenv --python=python3 ~/sparkbotenv
 
-Copy run.py.example
--------------------
+Whenever you'd like to use the virtualenv, you can activate it::
 
-``run.py.example`` contains the code needed to run SparkBot. It's also where you'll create new commands for the bot. We'll copy it to ``run.py`` now::
+    # Linux
+    source ~/sparkbotenv/bin/activate
 
-    cp ~/sparkbot/run.py.example ~/sparkbot/run.py
+    # Windows (Powershell)
+    ~/sparkbotenv/Scripts/activate.ps1
 
-Set up a virtualenv
--------------------
+SparkBot's dependencies are automatically installed with it, so we'll install the base version now::
 
-Create and activate a Python(3.5+) virtualenv for the bot::
+    pip install git+https://github.com/UniversalSuperBox/SparkBot-ng.git#egg=sparkbot
 
-    python3 -m virtualenv ~/sparkbotEnv
-    source ~/sparkbotEnv/bin/activate
+Run it!
+-------
 
-Now we can install the required Python packages::
+With that done, we're ready to go! Open a file called ``run.py`` and toss in some example code::
 
-    pip install -r ~/sparkbot/requirements.txt
-    pip install gunicorn
+    from sparkbot import SparkBot
+    from sparkbot.receivers.console import ConsoleReceiver
 
-Use ngrok for a temporary reverse proxy
----------------------------------------
+    bot = SparkBot()
 
-`ngrok`_ is a great service for setting up temporary public URLs. We'll be using it to quickly test
-our bot configuration. `Download ngrok`_, then run ``ngrok http 8000`` to get it running.
+    @bot.command("ping")
+    def example(commandline):
 
-Run the bot
------------
+        return "pong"
 
-We can now test the bot. Sparkbot requires that a few environment variables be set, so we'll ``export`` them before we run::
+    if __name__ == "__main__":
+        ConsoleReceiver(bot).cmdloop()
 
-    cd ~/sparkbot
-    source ~/sparkbotEnv/bin/activate
-    export SPARK_ACCESS_TOKEN=[api_token]
-    export WEBHOOK_URL=[url]
-    gunicorn run:bot.receiver
+Great! Let's open it up::
 
-Replace ``[url]`` with the URL that points to your webhook endpoint. Since we're using ngrok, put the ``https`` Forwarding URL here. Replace ``[api_token]`` with the token that Webex Teams gave you for your bot.
+    python run.py
 
-The bot should now be running and, assuming your proxy is working correctly, be able to receive requests directed at it from Webex Teams. Try messaging the bot with ``ping`` or ``help`` to see if it will respond.
+    >Welcome to the SparkBot-ng console receiver. Type 'command' to execute a bot command. Type 'help' or '?' to list commands.
+    >
+    >(sparkbot)
+
+Great! This is the SparkBot console receiver, a barebones way to test your bot without needing to connect to any cloud service. As the intro text suggests, let's try starting a command::
+
+    (sparkbot) command ping
+    >pong
+
+That was easy! Let's break down what we just did.
+
+The first part of the file is boring boilerplate to import and instance SparkBot::
+
+    from sparkbot import SparkBot
+    from sparkbot.receivers.console import ConsoleReceiver
+
+    bot = SparkBot()
+
+Now that we have the ``bot`` object, we can add a command to it using the ``SparkBot.command()`` decorator::
+
+    @bot.command("ping")
+    def example(commandline):
+
+        return "pong"
+
+This sets up a simple command which is called ``ping``. When users command the bot to run ``ping``, it executes the decorated function. The function name is ``example`` to show that the function name doesn't matter.
+
+All command functions must take one argument, ``commandline`` is a good name for it. The argument is a list of strings, split with `shlex.split <https://docs.python.org/3.6/library/shlex.html#shlex.split>`_ internally. This gives you a nice list of tokens which the user sent in. To demonstrate, let's add another command before the ``if __name__ == "__main__":`` line::
+
+    @bot.command("arguments")
+    def arguments(commandline):
+
+        for argument in commandline:
+            yield argument
+
+Let's run it. You'll need to ``exit`` your previous session and re-run the file, then::
+
+    (sparkbot) command arguments a long "list of" things
+    >arguments
+    >a
+    >long
+    >list of
+    >things
+
+This shows our neatly tokenized list of arguments, including quoted strings!
+
+Wait, ``yield``? Yes, we can use ``yield`` in our commands to return multiple strings to the user. This would be helpful if you had a very long-running command and wanted to give your user updates on the progress::
+
+    import time
+
+    @bot.command("forever")
+    def takes_forever(commandline):
+
+        yield("Okay, this will take a while!")
+        time.sleep(10)
+        yield("All done!")
+
+Re-run the file, then:
+
+.. code-block:: shell
+
+    (sparkbot) command forever
+    > Okay, this will take a while!
+    # ... 10 second delay ...
+    > All done!
 
 Next steps
 ----------
 
-Now that you've got the bot running, you may want to learn more about :doc:`/writing-commands` or :doc:`Deploying SparkBot </deploy>`
+With that, you've learned all you need to light your bot's fire using SparkBot. Writing commands is no harder than creating a function and returning strings!
 
-.. _my apps portal: https://developer.webex.com/apps.html
-.. _ngrok: https://ngrok.com/
-.. _download ngrok: https://ngrok.com/download
+Now that you're started on your journey, check out `Writing Commands`_ to learn more about writing more commands. If you're confident that you've got this down and want to get straight to deploying SparkBot for use on your favorite messaging service, check out the Deploy section to your left.

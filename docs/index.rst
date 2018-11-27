@@ -5,13 +5,17 @@ Welcome to the documentation for SparkBot! If you're looking for the fastest way
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
+   :caption: Get started
 
-   quickstart
+   start/quickstart
    writing-commands
    deploy
-   sparkbot
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Deploy
+
+   deploy/teams
 
 Indices and tables
 ==================
