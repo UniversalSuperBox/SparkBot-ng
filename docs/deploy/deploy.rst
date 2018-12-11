@@ -3,6 +3,10 @@ Deploy
 
 When it comes time to deploy your bot to a server, we recommend using gunicorn and nginx. The following information will help you run the bot under gunicorn with nginx as its reverse proxy.
 
+This document applies to the following receiver modules included with SparkBot:
+
+* :module:`Microsoft Teams <sparkbot.receivers.msteams>`
+
 This information is adapted from the `Deploying Gunicorn`_ document, you may wish to head to it for more advanced setups.
 
 Install required system packages

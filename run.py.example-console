@@ -23,7 +23,7 @@ bot = SparkBot()
 
 # Add commands here
 @bot.command("ping")
-def ping(commandline):
+def example(commandline):
     """
     Usage: `ping`
 
